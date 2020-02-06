@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Speech Recording</title>
+<script src="https://unpkg.com/anycontrol/dist/index.umd.min.js"></script>
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,900&display=swap&effect=anaglyph" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+<style>
+
+table,div{
+	text-align:center;
+	display:flex;
+	justify-content:center;
+}
+h1,h3,p{
+	font-family: 'Montserrat', sans-serif;
+}
+p{
+  text-transform: capitalize;
+}
+</style>
+</head>
+<body>
+<div style="text-align:center;">
+	<h1 class="font-effect-anaglyph"> Voice Prescription</h1>
+</div>
+<div>
+	<table id="details" cellpadding="10">
+		<tr id="name">
+			<td><h3>Name</h3></td>
+      <td><p id="t1"></p></td>
+		</tr>
+
+		<tr id="symptoms">
+			<td><h3>Symptoms</h3></td>
+      <td><p id="t2"></p></td>
+		</tr>
+
+
+		<tr id="diagnosis">
+			<td><h3>Diagnosis</h3></td>
+      <td><p id="t3"></p></td>
+		</tr>
+
+		<tr id="prescription">
+			<td><h3>Prescription</h3></td>
+      <td><p id="t4"></p></td>
+		</tr>
+
+		<tr id="advice">
+			<td><h3>Suggestion</h3></td>
+      <td><p id="t5"></p></td>
+		</tr>
+	</table>
+</div>
+
+
+
+
+
+<script>
+  var ctrl = new anycontrol()
+
+ com=['name','age','gender','symptoms','diagnosis','prescription','advice']
+ const capitalize = (s) => {
+  if (typeof s !== 'string') return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+
+  ctrl.addCommand("Start", function(){
+  console.log('Hello Doctor')
+  console.log('Please give discription')
+  });
+
+  ctrl.addCommand("Name ${USER} Age ${Age} Gender ${gen}", function (doc) {
+  var str = doc.gen;
+  var res = str.split(" ");
+  var a = res.indexOf("age");
+  st=""
+  for(var i=0;i<a;i++){
+st=st+" "+res[i];
+  }
+  var t1 = document.getElementById("t1");
+  var txt =	document.createTextNode(capitalize(st)+", "+capitalize(res[a+1])+", "+capitalize(res[a+3]));
+  t1.appendChild(txt);
+  });
+
+  ctrl.addCommand("Name ${USER} ${Age} Gender ${gen}", function (doc) {
+  var str = doc.gen;
+  var res = str.split(" ");
+  c=0
+  for(var i=0;i<res.length;i++){
+  if(res[i]=='age')
+  {c=1;
+  break
+  }
+  if (isNumeric(res[i])==true)
+  {p=i;
+  break;}
+  }
+  if(c!=1){
+  st=""
+  for(var i=0;i<p;i++)
+  {
+	st=st+" "+res[i];
+  }
+  var t1 = document.getElementById("t1");
+  var txt =	document.createTextNode(capitalize(st)+", "+capitalize(res[a+1])+", "+capitalize(res[a+3]));
+  t1.appendChild(txt);
+  }
+
+  });
+
+  function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+ctrl.addCommand("edit ${ed}",function(doc){
+var st=doc.ed;
+var e=st.split(" ");
+console.log(st)
+if(com.includes(e[0])==true){
+console.log("Please give new "+doc.ed)
+}
+else{
+console.log("No entry like "+doc.ed+" exits")
+}
+});
+
+
+
+
+ ctrl.addCommand("Symptoms ${sym}", function(doc){
+  var st=doc.sym;
+  if (st){
+  var s=st.split(" ");
+
+  var t1 = document.getElementById("t2");
+  var txt =	document.createTextNode(capitalize(doc.sym));
+  t1.appendChild(txt);
+
+}
+});
+
+ ctrl.addCommand("Diagnosis ${diag}",function(doc){
+ var st=doc.diag;
+  if (st){
+  var s=st.split(" ");
+
+var t1 = document.getElementById("t3");
+  var txt =	document.createTextNode(capitalize(doc.diag));
+  t1.appendChild(txt);
+}
+ });
+
+ ctrl.addCommand("Prescription ${pres}",function(doc){
+ var st=doc.pres;
+  if (st){
+  var s=st.split(" ");
+  var t1 = document.getElementById("t4");
+  var txt =	document.createTextNode(capitalize(doc.pres));
+  t1.appendChild(txt);
+ }
+ });
+
+
+ ctrl.addCommand("Suggestion ${adv}",function(doc){
+  var st=doc.adv;
+  if (st){
+  var s=st.split(" ");
+  var t1 = document.getElementById("t5");
+  var txt =	document.createTextNode(capitalize(doc.adv));
+  t1.appendChild(txt);
+  console.log(doc.adv);
+ }
+
+ });
+  ctrl.addCommand("done",function(){
+  var table=document.getElementById('details');
+  table.setAttribute("border","1");
+  console.log('a');
+});
+
+
+ctrl.start();
+</script>
+</body>
+</html>
